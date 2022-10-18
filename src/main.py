@@ -8,7 +8,7 @@ pygame.init()
 screen = pygame.display.set_mode((512, 512))
 pygame.display.set_caption("Graz")
 
-player = Sprite("./images/cyborg.png", 50, 50, 64, 64)
+player = Sprite("cyborg.png", 50, 50, 64, 64)
 
 running = True
 clock = pygame.time.Clock()
@@ -31,7 +31,7 @@ while running:
     if keys[K_LSHIFT]:
         x /= 2
         y /= 2
-    player.moveBy(x * MOVEMENT_SPEED, y * MOVEMENT_SPEED)
+    player.move_by(x * MOVEMENT_SPEED, y * MOVEMENT_SPEED)
 
     screen.fill((255, 255, 255))
     player.show()
