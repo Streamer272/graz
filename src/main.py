@@ -23,12 +23,13 @@ while running:
             running = False
         elif event.type == MOUSEBUTTONDOWN:
             bullet = player.shoot(event.pos)
-            sprites.append(bullet)
+            if bullet is not None:
+                sprites.append(bullet)
 
     keys = pygame.key.get_pressed()
 
     if keys[K_q]:
-        player.ability()
+        player.ability(sprites)
 
     x = 0
     y = 0

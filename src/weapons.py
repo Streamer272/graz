@@ -65,8 +65,18 @@ class Weapon(Sprite):
     bullet_speed: float
     last_fired: int
 
-    def __init__(self, weapon_type: WeaponType, damage: float, fire_rate: float, bullet_speed: float, path: str, x: int,
-                 y: int, width: int, height: int):
+    def __init__(
+            self,
+            weapon_type: WeaponType,
+            damage: float,
+            fire_rate: float,
+            bullet_speed: float,
+            path: str,
+            x: int,
+            y: int,
+            width: int,
+            height: int
+    ):
         super(Weapon, self).__init__(path, x, y, width, height)
         self.weapon_type = weapon_type
         self.damage = damage
@@ -75,16 +85,32 @@ class Weapon(Sprite):
         self.last_fired = -self.fire_cooldown
 
     def shoot(self, position: Tuple[int, int], shot_by: UUID):
+        return self._shoot(position, shot_by, "bullet.png", 4, 4)
+
+    def _shoot(self, position: Tuple[int, int], shot_by: UUID, path: str, width: int, height: int):
         now = pygame.time.get_ticks()
         if now - self.last_fired < self.fire_cooldown:
             return
         self.last_fired = now
 
-        bullet = Bullet(shot_by, self.damage, self.bullet_speed, "bullet.png", self.x, self.y, 4, 4)
+        bullet = Bullet(shot_by, self.damage, self.bullet_speed, path, self.x, self.y, width, height)
         bullet.target(position[0], position[1])
         return bullet
 
 
 class Gun(Weapon):
     def __init__(self, x: int, y: int):
-        super(Gun, self).__init__(WeaponType.RANGE, 5, 1, 2, "gun.png", x, y, 24, 24)
+        super(Gun, self).__init__(
+            weapon_type=WeaponType.RANGE,
+            damage=5,
+            fire_rate=1,
+            bullet_speed=3,
+            path="gun.png",
+            x=x,
+            y=y,
+            width=24,
+            height=24
+        )
+
+    def shoot(self, position: Tuple[int, int], shot_by: UUID):
+        return self._shoot(position, shot_by, "bullet.png", 4, 4)

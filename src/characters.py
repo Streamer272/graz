@@ -1,10 +1,10 @@
+from typing import Tuple, List
 from uuid import uuid4, UUID
-from typing import Tuple
 
 import pygame.time
 
 from sprite import Sprite
-from weapons import Weapon, Gun, GUN_OFFSET
+from weapons import Weapon, Gun, GUN_OFFSET, Bullet
 
 
 class Character(Sprite):
@@ -15,8 +15,17 @@ class Character(Sprite):
     ability_cooldown: int
     ability_last_used: int
 
-    def __init__(self, health: int, weapon: Weapon, ability_cooldown: int, path: str, x: int, y: int, width: int,
-                 height: int):
+    def __init__(
+            self,
+            health: int,
+            weapon: Weapon,
+            ability_cooldown: int,
+            path: str,
+            x: int,
+            y: int,
+            width: int,
+            height: int
+    ):
         self.id = uuid4()
         super(Character, self).__init__(path, x, y, width, height)
         self.max_health = health
@@ -34,7 +43,7 @@ class Character(Sprite):
     def update(self):
         self.weapon.move_to(self.x + GUN_OFFSET[0], self.y + GUN_OFFSET[1])
 
-    def ability(self):
+    def ability(self, sprites: List):
         pass
 
     def show(self):
@@ -50,11 +59,22 @@ class Cyborg(Character):
     def update(self):
         super(Cyborg, self).update()
 
-    def ability(self):
+    def ability(self, sprites: List):
         now = pygame.time.get_ticks()
         if now - self.ability_last_used < self.ability_cooldown:
             return
         self.ability_last_used = now
 
-        print("USING ABILITY")
-        # TODO
+        mouse_position = pygame.mouse.get_pos()
+        bullet = Bullet(
+            shot_by=self.id,
+            damage=10,
+            speed=5,
+            path="energy-bolt.png",
+            x=self.weapon.x,
+            y=self.weapon.y,
+            width=12,
+            height=12
+        )
+        bullet.target(mouse_position[0], mouse_position[1])
+        sprites.append(bullet)

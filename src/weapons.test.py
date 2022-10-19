@@ -87,7 +87,9 @@ def test_bullet_target():
         for test in value["test"]:
             y = round(fx(test[0]), 3)
             x = round(fy(test[1]), 3)
-            print(f"Testing fx({test[0]}) = {y} ({round(test[1], 3)}) / Testing fy({test[1]}) = {x} ({round(test[0], 3)})")
+            print(
+                f"Testing fx({test[0]}) = {y} ({round(test[1], 3)}) / Testing fy({test[1]}) = {x} ({round(test[0], 3)})"
+            )
             assert y == round(test[1], 3), f"fx({test[0]}) = {round(test[1], 3)}"
             assert x == round(test[0], 3), f"fy({test[1]}) = {round(test[0], 3)}"
 
