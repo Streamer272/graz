@@ -23,10 +23,10 @@ class Weapon(Sprite):
 
 
 class Bullet(Sprite):
-    start_x: int
-    start_y: int
-    end_x: int
-    end_y: int
+    x1: int
+    y1: int
+    x2: int
+    y2: int
     damage: float
     speed: float
 
@@ -36,7 +36,12 @@ class Bullet(Sprite):
         self.speed = speed
 
     def target(self, x, y):
-        pass
+        self.x1 = self.x
+        self.y1 = self.y
+        self.x2 = x
+        self.y2 = y
+        slope = (self.y2 - self.y1) / (self.x2 - self.x1)
+        return lambda x: slope * (x - self.x1) + self.y1
 
 
 class Gun(Weapon):
