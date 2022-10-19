@@ -10,6 +10,7 @@ class Sprite:
     y: int
     width: int
     height: int
+    destroy: bool
 
     def __init__(self, path: str, x: int, y: int, width: int, height: int):
         self.image = pygame.image.load(f"./images/{path}")
@@ -18,24 +19,22 @@ class Sprite:
         self.y = y
         self.width = width
         self.height = height
+        self.destroy = False
 
     def show(self):
         pygame.display.get_surface().blit(self.image, (self.x, self.y))
-        return self
 
     def move_to(self, x, y):
         self.x = x
         self.y = y
-        return self
 
     def move_by(self, x, y):
         if sqrt(pow(x, 2) + pow(y, 2)) > MOVEMENT_SPEED:
             a = sqrt(pow(MOVEMENT_SPEED, 2) / 2)
-            x = a * -1 if x < 0 else 1
-            y = a * -1 if y < 0 else 1
+            x = a * (-1.0 if x < 0 else 1.0)
+            y = a * (-1.0 if y < 0 else 1.0)
         self.x += x
         self.y += y
-        return self
 
     def collides_with(self, other):
         return not any([
@@ -44,3 +43,6 @@ class Sprite:
             other.x > self.x + self.width,
             other.y > self.y + self.width
         ])
+
+    def update(self):
+        pass

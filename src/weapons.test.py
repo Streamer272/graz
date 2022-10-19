@@ -79,11 +79,15 @@ def test_bullet_target():
         print(f"--- Testing #{index} ---")
         index += 1
         bullet = Bullet(1, 1, "bullet.png", x=value["position"][0], y=value["position"][1], width=4, height=4)
-        f = bullet.target(x=value["target"][0], y=value["target"][1])
+        bullet.target(x=value["target"][0], y=value["target"][1])
+        fx = bullet.fx
+        fy = bullet.fy
         for test in value["test"]:
-            y = round(f(test[0]), 3)
-            print(f"Testing f({test[0]}) = {y} ({round(test[1], 3)})")
-            assert y == round(test[1], 3), f"f({test[0]}) = {round(test[1], 3)}"
+            y = round(fx(test[0]), 3)
+            x = round(fy(test[1]), 3)
+            print(f"Testing fx({test[0]}) = {y} ({round(test[1], 3)}) / Testing fy({test[1]}) = {x} ({round(test[0], 3)})")
+            assert y == round(test[1], 3), f"fx({test[0]}) = {round(test[1], 3)}"
+            assert x == round(test[0], 3), f"fy({test[1]}) = {round(test[0], 3)}"
 
 
 if __name__ == "__main__":
