@@ -1,5 +1,6 @@
 from enum import Enum
 from typing import Callable, Tuple
+from uuid import UUID
 
 import pygame.display
 
@@ -14,6 +15,7 @@ class WeaponType(Enum):
 
 
 class Bullet(Sprite):
+    shot_by: UUID
     x1: int
     y1: int
     x2: int
@@ -25,8 +27,9 @@ class Bullet(Sprite):
     fx: Callable
     fy: Callable
 
-    def __init__(self, damage: float, speed: float, path: str, x: int, y: int, width: int, height: int):
+    def __init__(self, shot_by: UUID, damage: float, speed: float, path: str, x: int, y: int, width: int, height: int):
         super(Bullet, self).__init__(path, x, y, width, height)
+        self.shot_by = shot_by
         self.damage = damage
         self.speed = speed
 
@@ -71,13 +74,13 @@ class Weapon(Sprite):
         self.bullet_speed = bullet_speed
         self.last_fired = -self.fire_cooldown
 
-    def shoot(self, position: Tuple[int, int]):
+    def shoot(self, position: Tuple[int, int], shot_by: UUID):
         now = pygame.time.get_ticks()
         if now - self.last_fired < self.fire_cooldown:
             return
         self.last_fired = now
 
-        bullet = Bullet(self.damage, self.bullet_speed, "bullet.png", self.x, self.y, 4, 4)
+        bullet = Bullet(shot_by, self.damage, self.bullet_speed, "bullet.png", self.x, self.y, 4, 4)
         bullet.target(position[0], position[1])
         return bullet
 

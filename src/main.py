@@ -2,7 +2,8 @@ import pygame
 from pygame.locals import *
 
 from sprite import MOVEMENT_SPEED
-from characters import Cyborg
+from characters import Cyborg, Character
+from weapons import Bullet
 
 pygame.init()
 
@@ -53,6 +54,40 @@ while running:
         if sprite.destroy:
             sprites.pop(sprites.index(sprite))
             continue
+
+    for i in range(len(sprites)):
+        if sprites[i] is None:
+            continue
+
+        for j in range(i + 1, len(sprites)):
+            if i == j or sprites[j] is None:
+                continue
+            if not sprites[i].collides_with(sprites[j]):
+                continue
+
+            bullet: Bullet | None = None
+            character: Character | None = None
+            if isinstance(sprites[i], Bullet):
+                bullet = sprites[i]
+            elif isinstance(sprites[i], Character):
+                character = sprites[i]
+            if isinstance(sprites[j], Bullet):
+                bullet = sprites[j]
+            elif isinstance(sprites[j], Character):
+                character = sprites[j]
+            if bullet is None or character is None:
+                continue
+
+            if bullet.shot_by == character.id:
+                continue
+
+            bullet.destroy = True
+            character.take_damage(bullet.damage)
+
+    for sprite in sprites:
+        if sprite is None:
+            continue
+
         sprite.show()
     pygame.display.flip()
     clock.tick(60)
