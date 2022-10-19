@@ -3,8 +3,10 @@ from uuid import uuid4, UUID
 
 import pygame.time
 
-from sprite import Sprite
+from sprite import Sprite, load_image
 from weapons import Weapon, Gun, GUN_OFFSET, Bullet
+
+HEALTH_BAR_OFFSET = (0, -16)
 
 
 class Character(Sprite):
@@ -27,7 +29,7 @@ class Character(Sprite):
             height: int
     ):
         self.id = uuid4()
-        super(Character, self).__init__(path, x, y, width, height)
+        super(Character, self).__init__(load_image(path, width, height), x, y)
         self.max_health = health
         self.health = health
         self.weapon = weapon
@@ -70,11 +72,9 @@ class Cyborg(Character):
             shot_by=self.id,
             damage=10,
             speed=5,
-            path="energy-bolt.png",
+            surface=load_image("energy-bolt.png", 12, 12),
             x=self.weapon.x,
             y=self.weapon.y,
-            width=12,
-            height=12
         )
         bullet.target(mouse_position[0], mouse_position[1])
         sprites.append(bullet)

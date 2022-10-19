@@ -80,7 +80,7 @@ def test_bullet_target():
     for value in values:
         print(f"--- Testing #{index} ---")
         index += 1
-        bullet = Bullet(uuid4(), 1, 1, "bullet.png", x=value["position"][0], y=value["position"][1], width=4, height=4)
+        bullet = Bullet(uuid4(), 1, 1, "bullet.png", x=value["position"][0], y=value["position"][1], height=4)
         bullet.target(x=value["target"][0], y=value["target"][1])
         fx = bullet.fx
         fy = bullet.fy

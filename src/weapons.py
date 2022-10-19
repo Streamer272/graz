@@ -4,7 +4,7 @@ from uuid import UUID
 
 import pygame.display
 
-from sprite import Sprite, MOVEMENT_SPEED
+from sprite import Sprite, MOVEMENT_SPEED, load_image
 
 GUN_OFFSET = (32, 24)
 
@@ -27,8 +27,8 @@ class Bullet(Sprite):
     fx: Callable
     fy: Callable
 
-    def __init__(self, shot_by: UUID, damage: float, speed: float, path: str, x: int, y: int, width: int, height: int):
-        super(Bullet, self).__init__(path, x, y, width, height)
+    def __init__(self, shot_by: UUID, damage: float, speed: float, surface: pygame.Surface, x: int, y: int):
+        super(Bullet, self).__init__(surface, x, y)
         self.shot_by = shot_by
         self.damage = damage
         self.speed = speed
@@ -38,8 +38,10 @@ class Bullet(Sprite):
         self.y1 = self.y
         self.x2 = x
         self.y2 = y
+
         self.x_multiplier = 1 if self.x1 < self.x2 else -1
         self.y_multiplier = 1 if self.y1 < self.y2 else -1
+
         self.fx = lambda x: (self.y2 - self.y1) / (self.x2 - self.x1) * (x - self.x1) + self.y1
         self.fy = lambda y: (y - self.y1) * (self.x2 - self.x1) / (self.y2 - self.y1) + self.x1
 
@@ -71,13 +73,11 @@ class Weapon(Sprite):
             damage: float,
             fire_rate: float,
             bullet_speed: float,
-            path: str,
+            surface: pygame.Surface,
             x: int,
             y: int,
-            width: int,
-            height: int
     ):
-        super(Weapon, self).__init__(path, x, y, width, height)
+        super(Weapon, self).__init__(surface, x, y)
         self.weapon_type = weapon_type
         self.damage = damage
         self.fire_cooldown = int(1 / fire_rate * 1000)
@@ -87,13 +87,13 @@ class Weapon(Sprite):
     def shoot(self, position: Tuple[int, int], shot_by: UUID):
         return self._shoot(position, shot_by, "bullet.png", 4, 4)
 
-    def _shoot(self, position: Tuple[int, int], shot_by: UUID, path: str, width: int, height: int):
+    def _shoot(self, position: Tuple[int, int], shot_by: UUID, surface: pygame.Surface):
         now = pygame.time.get_ticks()
         if now - self.last_fired < self.fire_cooldown:
             return
         self.last_fired = now
 
-        bullet = Bullet(shot_by, self.damage, self.bullet_speed, path, self.x, self.y, width, height)
+        bullet = Bullet(shot_by, self.damage, self.bullet_speed, surface, self.x, self.y)
         bullet.target(position[0], position[1])
         return bullet
 
@@ -105,12 +105,10 @@ class Gun(Weapon):
             damage=5,
             fire_rate=1,
             bullet_speed=3,
-            path="gun.png",
+            surface=load_image("gun.png", 24, 24),
             x=x,
             y=y,
-            width=24,
-            height=24
         )
 
     def shoot(self, position: Tuple[int, int], shot_by: UUID):
-        return self._shoot(position, shot_by, "bullet.png", 4, 4)
+        return self._shoot(position, shot_by, load_image("bullet.png", 4, 4))

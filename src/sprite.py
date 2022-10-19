@@ -4,25 +4,26 @@ from math import sqrt, pow
 MOVEMENT_SPEED = 2.0
 
 
+def load_image(path: str, width: int, height: int):
+    image = pygame.image.load(f"./images/{path}")
+    image = pygame.transform.scale(image, (width, height))
+    return image
+
+
 class Sprite:
-    image: pygame.Surface
+    surface: pygame.Surface
     x: int
     y: int
-    width: int
-    height: int
     destroy: bool
 
-    def __init__(self, path: str, x: int, y: int, width: int, height: int):
-        self.image = pygame.image.load(f"./images/{path}")
-        self.image = pygame.transform.scale(self.image, (width, height))
+    def __init__(self, surface: pygame.Surface, x: int, y: int):
+        self.surface = surface
         self.x = x
         self.y = y
-        self.width = width
-        self.height = height
         self.destroy = False
 
     def show(self):
-        pygame.display.get_surface().blit(self.image, (self.x, self.y))
+        pygame.display.get_surface().blit(self.surface, (self.x, self.y))
 
     def move_to(self, x, y):
         self.x = x
@@ -38,10 +39,10 @@ class Sprite:
 
     def collides_with(self, other):
         return not any([
-            other.x + other.width < self.x,
-            other.y + other.height < self.y,
-            other.x > self.x + self.width,
-            other.y > self.y + self.width
+            other.x + other.surface.get_width() < self.x,
+            other.y + other.surface.get_height() < self.y,
+            other.x > self.x + self.surface.get_width(),
+            other.y > self.y + self.surface.get_height()
         ])
 
     def update(self):
