@@ -6,7 +6,7 @@ from characters import Cyborg
 
 pygame.init()
 
-screen = pygame.display.set_mode((512, 512))
+screen = pygame.display.set_mode((512, 512), pygame.RESIZABLE)
 pygame.display.set_caption("Graz")
 
 sprites = []

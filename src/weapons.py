@@ -43,12 +43,9 @@ class Bullet(Sprite):
     def update(self):
         next_x = self.x + self.speed * MOVEMENT_SPEED * self.x_multiplier
         next_y = self.fx(next_x)
-        max_y = self.y + self.speed * MOVEMENT_SPEED * self.y_multiplier
-        if next_y > max_y:
-            next_y = max_y
+        if abs(next_y - self.y) > self.speed * MOVEMENT_SPEED:
+            next_y = self.y + self.speed * MOVEMENT_SPEED * self.y_multiplier
             next_x = self.fy(next_y)
-
-        print(f"BU {next_x}:{next_y}")
 
         screen_size = pygame.display.get_window_size()
         if next_x < 0 or next_y < 0 or next_x > screen_size[0] or next_y > screen_size[1]:
