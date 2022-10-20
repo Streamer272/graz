@@ -86,7 +86,7 @@ class GCharacter(GSprite, Character):
         self.ability_cooldown_text.show()
 
 
-class Cyborg(GCharacter):
+class GCyborg(GCharacter):
     def __init__(self, team: Team, x: int, y: int):
         self.init_gcharacter(
             weapon=GGun(x + GUN_OFFSET[0], y + GUN_OFFSET[1]),

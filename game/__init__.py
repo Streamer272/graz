@@ -2,7 +2,7 @@ import pygame
 from pygame.locals import *
 
 from game.gsprite import MOVEMENT_SPEED
-from game.gcharacter import Cyborg, GCharacter
+from game.gcharacter import GCyborg, GCharacter
 from game.gweapon import GBullet
 
 
@@ -12,8 +12,9 @@ def main():
     screen = pygame.display.set_mode((512, 512), pygame.RESIZABLE)
     pygame.display.set_caption("Graz")
 
+    # TODO: fix
     sprites = []
-    player = Cyborg(x=100, y=100)
+    player = GCyborg(x=100, y=100)
     sprites.append(player)
 
     running = True
@@ -31,7 +32,7 @@ def main():
         keys = pygame.key.get_pressed()
 
         if keys[K_q]:
-            player.ability(sprites)
+            player.ability(pygame.mouse.get_pos())
 
         x = 0
         y = 0
