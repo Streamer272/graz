@@ -1,23 +1,24 @@
 import json
+import random
 import socket
-from typing import List, Tuple, Callable, Dict
+from typing import Tuple, Callable, Dict
 
-from shared.character import Character
+from server import teams
+from server.variables import characters, sprites
+from shared.character import Character, Cyborg
 from shared.find import find
 from shared.sprite import Sprite
-from shared.team import Team
 
 
 class Handler(Sprite):
     client: socket.socket
-    teams: List[Team]
     character: Character | None
     event_table: Dict[str, Callable]
 
-    def __init__(self, client: socket.socket, teams: List[Team]):
+    def __init__(self, client: socket.socket):
         super(Handler, self).__init__()
         self.client = client
-        self.teams = teams
+        self.character = Cyborg(random.choice(teams), 100, 100)
         self.event_table = {
             "team_get": self.team_get,
             "team_set": self.team_set,
@@ -48,28 +49,27 @@ class Handler(Sprite):
             self.client.send(json.dumps(result))
 
     def team_get(self):
-        return self.teams
+        return teams
 
     def team_set(self, value: str):
-        team = find(self.teams, lambda x: x.id == value)
-        self.team = team
+        team = find(teams, lambda x: x.id == value)
+        self.character.team = team
 
     def character_get(self):
-        # TODO
-        pass
+        return characters
 
     def character_set(self, value: str):
-        # TODO
-        pass
+        character = find(characters, lambda x: x.id == value)
+        self.character = character(self.character.team, self.character.x, self.character.y)
 
     def shoot(self, value: Tuple[int, int]):
-        # TODO
-        pass
+        bullet = self.character.weapon.shoot(value, self.character.team)
+        sprites.append(bullet)
 
     def player_move(self, value: Tuple[int, int]):
-        # TODO
-        pass
+        self.character.x = value[0]
+        self.character.y = value[1]
 
     def player_ability(self, value: Tuple[int, int]):
-        # TODO
-        pass
+        bullet = self.character.ability(value)
+        sprites.append(bullet)

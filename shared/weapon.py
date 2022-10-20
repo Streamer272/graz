@@ -79,6 +79,19 @@ class Weapon(Sprite):
         self.init_sprite(x, y, width, height)
         return self
 
+    def shoot(self, position: Tuple[int, int], shot_by: Team):
+        return Bullet().init_bullet(
+            shot_by=shot_by,
+            damage=self.damage,
+            speed=self.bullet_speed,
+            x1=self.x,
+            y1=self.y,
+            x2=position[0],
+            y2=position[1],
+            width=4,
+            height=4
+        )
+
 
 class Gun(Weapon):
     def __init__(self, x: int, y: int):

@@ -1,9 +1,8 @@
 import socket
 from threading import Thread
-from typing import List
 
 from server.handler import Handler
-from shared.team import Team
+from server.variables import teams, players
 
 
 def main():
@@ -12,15 +11,9 @@ def main():
     server.listen()
     print("Server started on localhost:5000")
 
-    teams: List[Team] = [
-        Team(name="Blue", color=(0, 0, 255)),
-        Team(name="Red", color=(255, 0, 0))
-    ]
-    players: List[Handler] = []
-
     while True:
         client, _ = server.accept()
         print("Client connected")
-        handler = Handler(client, teams)
+        handler = Handler(client)
         Thread(target=handler.handle, daemon=True).start()
         players.append(handler)

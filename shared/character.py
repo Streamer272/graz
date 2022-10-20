@@ -52,7 +52,7 @@ class Cyborg(Character):
         )
 
     def ability(self, mouse_position: Tuple[int, int]):
-        bullet = Bullet().init_bullet(
+        return Bullet().init_bullet(
             shot_by=self.team,
             damage=10,
             speed=5,
@@ -63,4 +63,3 @@ class Cyborg(Character):
             width=12,
             height=12
         )
-        sprites.append(bullet)
