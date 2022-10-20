@@ -38,3 +38,6 @@ class Sprite(Entity):
             other.x > self.x + self.width,
             other.y > self.y + self.height
         ])
+
+    def update(self):
+        pass

@@ -1,5 +1,4 @@
 from typing import Tuple, List
-from uuid import uuid4, UUID
 
 import pygame.time
 
@@ -8,6 +7,7 @@ from game.gweapon import GWeapon, GGun, GUN_OFFSET, GBullet
 from game.variables import weapons
 from shared.character import Character
 from shared.find import find
+from shared.team import Team
 
 pygame.font.init()
 
@@ -26,6 +26,7 @@ class GCharacter(GSprite, Character):
     def init_gcharacter(
             self,
             weapon: GWeapon,
+            team: Team,
             max_health: int,
             health: int,
             ability_cooldown: int,
@@ -35,12 +36,12 @@ class GCharacter(GSprite, Character):
             width: int,
             height: int
     ):
-        super(GCharacter, self).__init__(load_image(path, width, height), x, y)
         self.ability_last_used = -ability_cooldown
         self.ability_cooldown_text = GSprite().init_gsprite(FONT.render("Ready", True, (0, 0, 0)), 0, 0)
         self.health_bar = GSprite().init_gsprite(load_image("red.png", int(self.health / self.max_health * 100), 16), 0, 0)
         self.health_bar_bg = GSprite().init_gsprite(load_image("black.png", 100, 16), 0, 0)
-        self.init_character(weapon.id, max_health, health, ability_cooldown, x, y, width, height)
+        self.init_character(weapon.id, team.id, max_health, health, ability_cooldown, x, y, width, height)
+        self.init_gsprite(load_image(path, width, height), x, y)
         return self
 
     def shoot(self, position: Tuple[int, int]):
@@ -85,10 +86,11 @@ class GCharacter(GSprite, Character):
 
 
 class Cyborg(GCharacter):
-    def __init__(self, x: int, y: int):
+    def __init__(self, team: Team, x: int, y: int):
         weapon = GGun(x + GUN_OFFSET[0], y + GUN_OFFSET[1])
         self.init_gcharacter(
             weapon=weapon,
+            team=team,
             max_health=30,
             health=30,
             ability_cooldown=5000,
@@ -110,9 +112,10 @@ class Cyborg(GCharacter):
             shot_by=self.id,
             damage=10,
             speed=5,
-            surface=load_image("energy-bolt.png", 12, 12),
-            x=find(weapons, lambda x: x.id == self.weapon).x,
-            y=find(weapons, lambda x: x.id == self.weapon).y,
+            x1=find(weapons, lambda x: x.id == self.weapon).x,
+            y1=find(weapons, lambda x: x.id == self.weapon).y,
+            x2=mouse_position[0],
+            y2=mouse_position[1],
+            surface=load_image("energy-bolt.png", 12, 12)
         )
-        bullet.target(mouse_position[0], mouse_position[1])
         sprites.append(bullet)

@@ -23,6 +23,3 @@ class GSprite(Sprite):
 
     def show(self):
         pygame.display.get_surface().blit(self.surface, (self.x, self.y))
-
-    def update(self):
-        pass

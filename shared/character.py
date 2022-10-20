@@ -27,3 +27,4 @@ class Character(Sprite):
         self.health = health
         self.ability_cooldown = ability_cooldown
         self.init_sprite(x, y, width, height)
+        return self
