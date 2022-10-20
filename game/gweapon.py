@@ -1,20 +1,15 @@
-from enum import Enum
 from typing import Callable, Tuple
 from uuid import UUID
 
 import pygame.display
 
-from game.sprite import Sprite, MOVEMENT_SPEED, load_image
+from game.gsprite import GSprite, MOVEMENT_SPEED, load_image
+from shared.weapon import WeaponType
 
 GUN_OFFSET = (32, 24)
 
 
-class WeaponType(Enum):
-    RANGE = 0
-    MELEE = 1
-
-
-class Bullet(Sprite):
+class GBullet(GSprite):
     shot_by: UUID
     x1: int
     y1: int
@@ -28,7 +23,7 @@ class Bullet(Sprite):
     fy: Callable
 
     def __init__(self, shot_by: UUID, damage: int, speed: float, surface: pygame.Surface, x: int, y: int):
-        super(Bullet, self).__init__(surface, x, y)
+        super(GBullet, self).__init__(surface, x, y)
         self.shot_by = shot_by
         self.damage = damage
         self.speed = speed
@@ -60,7 +55,7 @@ class Bullet(Sprite):
         self.move_to(next_x, next_y)
 
 
-class Weapon(Sprite):
+class GWeapon(GSprite):
     weapon_type: WeaponType
     damage: int
     fire_cooldown: int
@@ -77,7 +72,7 @@ class Weapon(Sprite):
             x: int,
             y: int,
     ):
-        super(Weapon, self).__init__(surface, x, y)
+        super(GWeapon, self).__init__(surface, x, y)
         self.weapon_type = weapon_type
         self.damage = damage
         self.fire_cooldown = int(1 / fire_rate * 1000)
@@ -93,14 +88,14 @@ class Weapon(Sprite):
             return
         self.last_fired = now
 
-        bullet = Bullet(shot_by, self.damage, self.bullet_speed, surface, self.x, self.y)
+        bullet = GBullet(shot_by, self.damage, self.bullet_speed, surface, self.x, self.y)
         bullet.target(position[0], position[1])
         return bullet
 
 
-class Gun(Weapon):
+class GGun(GWeapon):
     def __init__(self, x: int, y: int):
-        super(Gun, self).__init__(
+        super(GGun, self).__init__(
             weapon_type=WeaponType.RANGE,
             damage=5,
             fire_rate=1,

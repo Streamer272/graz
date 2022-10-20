@@ -1,9 +1,9 @@
 import pygame
 from pygame.locals import *
 
-from game.sprite import MOVEMENT_SPEED
-from game.character import Cyborg, Character
-from game.weapon import Bullet
+from game.gsprite import MOVEMENT_SPEED
+from game.gcharacter import Cyborg, GCharacter
+from game.gweapon import GBullet
 
 
 def main():
@@ -68,15 +68,15 @@ def main():
                 if not sprites[i].collides_with(sprites[j]):
                     continue
 
-                bullet: Bullet | None = None
-                character: Character | None = None
-                if isinstance(sprites[i], Bullet):
+                bullet: GBullet | None = None
+                character: GCharacter | None = None
+                if isinstance(sprites[i], GBullet):
                     bullet = sprites[i]
-                elif isinstance(sprites[i], Character):
+                elif isinstance(sprites[i], GCharacter):
                     character = sprites[i]
-                if isinstance(sprites[j], Bullet):
+                if isinstance(sprites[j], GBullet):
                     bullet = sprites[j]
-                elif isinstance(sprites[j], Character):
+                elif isinstance(sprites[j], GCharacter):
                     character = sprites[j]
                 if bullet is None or character is None:
                     continue

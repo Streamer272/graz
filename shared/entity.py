@@ -6,5 +6,6 @@ ID = str
 class Entity:
     id: ID
 
-    def __init__(self):
+    def init_entity(self):
         self.id = uuid4().hex
+        return self

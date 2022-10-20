@@ -8,6 +8,6 @@ class Team(Entity):
     color: Tuple[int, int, int]
 
     def __init__(self, name: str, color: Tuple[int, int, int]):
-        super(Team, self).__init__()
         self.name = name
         self.color = color
+        self.init_entity()
