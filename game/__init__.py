@@ -2,8 +2,8 @@ import pygame
 from pygame.locals import *
 
 from game.sprite import MOVEMENT_SPEED
-from game.characters import Cyborg, Character
-from game.weapons import Bullet
+from game.character import Cyborg, Character
+from game.weapon import Bullet
 
 
 def main():

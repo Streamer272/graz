@@ -2,6 +2,7 @@ import json
 import socket
 from typing import List, Tuple, Callable, Dict
 
+from shared.find import find
 from shared.sprite import Sprite
 from shared.team import Team
 
@@ -35,7 +36,6 @@ class Player(Sprite):
             data = json.loads(data)
 
             function = self.event_table.get(data.event)
-            result = None
             if not function:
                 continue
             if data.get("value"):
@@ -51,9 +51,8 @@ class Player(Sprite):
         return self.teams
 
     def team_set(self, value: str):
-        for team in self.teams:
-            if team.id == value:
-                self.team = team
+        team = find(self.teams, lambda x: x.id == value)
+        self.team = team
 
     def character_get(self):
         # TODO

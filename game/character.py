@@ -4,7 +4,7 @@ from uuid import uuid4, UUID
 import pygame.time
 
 from game.sprite import Sprite, load_image
-from game.weapons import Weapon, Gun, GUN_OFFSET, Bullet
+from game.weapon import Weapon, Gun, GUN_OFFSET, Bullet
 
 pygame.font.init()
 

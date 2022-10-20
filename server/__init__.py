@@ -21,6 +21,6 @@ def main():
         while True:
             client, _ = server.accept()
             print("Client connected")
-            player = Player(client)
+            player = Player(client, teams)
             Thread(target=player.handle, daemon=True).start()
             players.append(player)
