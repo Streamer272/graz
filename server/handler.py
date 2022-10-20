@@ -3,8 +3,7 @@ import random
 import socket
 from typing import Tuple, Callable, Dict
 
-from server import teams
-from server.variables import characters, sprites
+from server.variables import characters, sprites, teams
 from shared.character import Character, Cyborg
 from shared.find import find
 from shared.sprite import Sprite

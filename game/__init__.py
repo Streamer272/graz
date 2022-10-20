@@ -4,18 +4,21 @@ from pygame.locals import *
 from game.gsprite import MOVEMENT_SPEED
 from game.gcharacter import GCyborg, GCharacter
 from game.gweapon import GBullet
+from game.variables import sprites
+from game import socket
 
 
 def main():
     pygame.init()
+    socket.connect()
 
     screen = pygame.display.set_mode((512, 512), pygame.RESIZABLE)
     pygame.display.set_caption("Graz")
 
     # TODO: fix
-    sprites = []
-    player = GCyborg(x=100, y=100)
-    sprites.append(player)
+    # sprites = []
+    # player = GCyborg(x=100, y=100)
+    # sprites.append(player)
 
     running = True
     clock = pygame.time.Clock()
@@ -25,14 +28,16 @@ def main():
             if event.type == QUIT:
                 running = False
             elif event.type == MOUSEBUTTONDOWN:
-                bullet = player.shoot(event.pos)
-                if bullet is not None:
-                    sprites.append(bullet)
+                # bullet = player.shoot(event.pos)
+                # if bullet is not None:
+                #     sprites.append(bullet)
+                pass
 
         keys = pygame.key.get_pressed()
 
         if keys[K_q]:
-            player.ability(pygame.mouse.get_pos())
+            # player.ability(pygame.mouse.get_pos())
+            pass
 
         x = 0
         y = 0
@@ -47,7 +52,7 @@ def main():
         if keys[K_LSHIFT]:
             x /= 2
             y /= 2
-        player.move_by(x * MOVEMENT_SPEED, y * MOVEMENT_SPEED)
+        # player.move_by(x * MOVEMENT_SPEED, y * MOVEMENT_SPEED)
 
         screen.fill((255, 255, 255))
         for sprite in sprites:

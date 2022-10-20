@@ -1,6 +1,5 @@
 from typing import Tuple
 
-from server.variables import sprites
 from shared.sprite import Sprite
 from shared.team import Team
 from shared.weapon import Gun, Weapon, GUN_OFFSET, Bullet

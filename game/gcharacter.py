@@ -4,9 +4,8 @@ import pygame.time
 
 from game.gsprite import GSprite, load_image
 from game.gweapon import GWeapon, GGun, GBullet
-from game.variables import weapons, sprites
+from game.variables import sprites
 from shared.character import Character
-from shared.find import find
 from shared.team import Team
 from shared.weapon import GUN_OFFSET
 
@@ -18,12 +17,12 @@ FONT = pygame.font.SysFont("freeserif", 16)
 
 
 class GCharacter(GSprite, Character):
+    weapon: GWeapon
     ability_last_used: int
     ability_cooldown_text: GSprite
     health_bar: GSprite
     health_bar_bg: GSprite
 
-    # TODO: make self.weapon type GWeapon
     def init_gcharacter(
             self,
             weapon: GWeapon,
@@ -43,11 +42,12 @@ class GCharacter(GSprite, Character):
         self.health_bar_bg = GSprite().init_gsprite(load_image("black.png", 100, 16), 0, 0)
         self.init_character(weapon, team, max_health, health, ability_cooldown, x, y, width, height)
         self.init_gsprite(load_image(path, width, height), x, y)
+        self.weapon = weapon
         return self
 
     def shoot(self, position: Tuple[int, int]):
         # TODO: change self.id to self.team
-        return find(weapons, lambda x: x.id == self.weapon).shoot(position, self.id)
+        return self.weapon.shoot(position, self.team)
 
     def take_damage(self, damage: int):
         self.health -= damage
@@ -61,7 +61,7 @@ class GCharacter(GSprite, Character):
             new_ability_cooldown = f"Ready in {int((self.ability_cooldown - now + self.ability_last_used) / 1000) + 1}"
         self.ability_cooldown_text.surface = FONT.render(new_ability_cooldown, True, (0, 0, 0))
 
-        find(weapons, lambda x: x.id == self.weapon).move_to(self.x + GUN_OFFSET[0], self.y + GUN_OFFSET[1])
+        self.weapon.move_to(self.x + GUN_OFFSET[0], self.y + GUN_OFFSET[1])
         self.ability_cooldown_text.move_to(
             self.x + ABILITY_COOLDOWN_OFFSET[0] + position_according_to(self.ability_cooldown_text),
             self.y + ABILITY_COOLDOWN_OFFSET[1]
@@ -80,7 +80,7 @@ class GCharacter(GSprite, Character):
 
     def show(self):
         super(GCharacter, self).show()
-        find(weapons, lambda x: x.id == self.weapon).show()
+        self.weapon.show()
         self.health_bar_bg.show()
         self.health_bar.show()
         self.ability_cooldown_text.show()
@@ -112,8 +112,8 @@ class GCyborg(GCharacter):
             shot_by=self.team,
             damage=10,
             speed=5,
-            x1=find(weapons, lambda x: x.id == self.weapon).x,
-            y1=find(weapons, lambda x: x.id == self.weapon).y,
+            x1=self.weapon.x,
+            y1=self.weapon.y,
             x2=mouse_position[0],
             y2=mouse_position[1],
             surface=load_image("energy-bolt.png", 12, 12)
