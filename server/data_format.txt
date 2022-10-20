@@ -1,0 +1,53 @@
+--- Server side events ---
+
+event: "team_get"
+->
+[Team]
+
+event: "team_set"
+value: id
+->
+{}
+
+event: "character_get"
+->
+[Character]
+
+event: "character_set"
+value: id
+->
+{}
+
+--- Client side events ---
+
+# mouse coordinates
+event: "shoot"
+value: Tuple[x, y]
+->
+{}
+
+# move direction
+event: "player_move"
+value: Tuple[x, y]
+->
+{}
+
+# mouse coordinates
+event: "player_ability"
+value: Tuple[x, y]
+->
+{}
+
+--- Server emitted events ---
+
+event: "sprite_create"
+value: Tuple[id, path, x, y, width, height]
+
+event: "sprite_move"
+value: Tuple[id, x, y]
+
+event: "sprite_destroy"
+value: id
+
+event: "character_health"
+value: Tuple[id, health]

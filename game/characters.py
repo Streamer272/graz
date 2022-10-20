@@ -3,8 +3,8 @@ from uuid import uuid4, UUID
 
 import pygame.time
 
-from sprite import Sprite, load_image
-from weapons import Weapon, Gun, GUN_OFFSET, Bullet
+from game.sprite import Sprite, load_image
+from game.weapons import Weapon, Gun, GUN_OFFSET, Bullet
 
 pygame.font.init()
 

@@ -1,19 +1,19 @@
 import pygame
 from math import sqrt, pow
 
+from shared import sprite
+
 MOVEMENT_SPEED = 2.0
 
 
 def load_image(path: str, width: int, height: int):
-    image = pygame.image.load(f"./images/{path}")
+    image = pygame.image.load(f"./game/images/{path}")
     image = pygame.transform.scale(image, (width, height))
     return image
 
 
-class Sprite:
+class Sprite(sprite.Sprite):
     surface: pygame.Surface
-    x: int
-    y: int
     destroy: bool
 
     def __init__(self, surface: pygame.Surface, x: int, y: int):

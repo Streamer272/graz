@@ -4,7 +4,7 @@ from uuid import UUID
 
 import pygame.display
 
-from sprite import Sprite, MOVEMENT_SPEED, load_image
+from game.sprite import Sprite, MOVEMENT_SPEED, load_image
 
 GUN_OFFSET = (32, 24)
 
@@ -22,12 +22,12 @@ class Bullet(Sprite):
     y2: int
     x_multiplier: int
     y_multiplier: int
-    damage: float
+    damage: int
     speed: float
     fx: Callable
     fy: Callable
 
-    def __init__(self, shot_by: UUID, damage: float, speed: float, surface: pygame.Surface, x: int, y: int):
+    def __init__(self, shot_by: UUID, damage: int, speed: float, surface: pygame.Surface, x: int, y: int):
         super(Bullet, self).__init__(surface, x, y)
         self.shot_by = shot_by
         self.damage = damage
@@ -62,7 +62,7 @@ class Bullet(Sprite):
 
 class Weapon(Sprite):
     weapon_type: WeaponType
-    damage: float
+    damage: int
     fire_cooldown: int
     bullet_speed: float
     last_fired: int
@@ -70,7 +70,7 @@ class Weapon(Sprite):
     def __init__(
             self,
             weapon_type: WeaponType,
-            damage: float,
+            damage: int,
             fire_rate: float,
             bullet_speed: float,
             surface: pygame.Surface,
