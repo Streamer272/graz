@@ -1,19 +1,16 @@
 from typing import Tuple
-from uuid import UUID
 
 import pygame.display
 
 from game.gsprite import GSprite, load_image
-from shared.entity import ID
+from shared.team import Team
 from shared.weapon import WeaponType, Bullet, Weapon
-
-GUN_OFFSET = (32, 24)
 
 
 class GBullet(GSprite, Bullet):
     def __init__(
             self,
-            shot_by: ID,
+            shot_by: Team,
             damage: int,
             speed: float,
             x1: int,
@@ -22,7 +19,17 @@ class GBullet(GSprite, Bullet):
             y2: int,
             surface: pygame.Surface
     ):
-        self.init_bullet(shot_by, damage, speed, x1, y1, x2, y2)
+        self.init_bullet(
+            shot_by,
+            damage,
+            speed,
+            x1,
+            y1,
+            x2,
+            y2,
+            surface.get_width(),
+            surface.get_height()
+        )
         self.init_gsprite(surface, x1, y1)
 
 
@@ -44,10 +51,10 @@ class GWeapon(GSprite, Weapon):
         self.last_fired = -self.fire_cooldown
         return self
 
-    def shoot(self, position: Tuple[int, int], shot_by: ID):
+    def shoot(self, position: Tuple[int, int], shot_by: Team):
         return self._shoot(position, shot_by, load_image("bullet.png", 4, 4))
 
-    def _shoot(self, position: Tuple[int, int], shot_by: ID, surface: pygame.Surface):
+    def _shoot(self, position: Tuple[int, int], shot_by: Team, surface: pygame.Surface):
         now = pygame.time.get_ticks()
         if now - self.last_fired < self.fire_cooldown:
             return
@@ -77,5 +84,5 @@ class GGun(GWeapon):
             y=y
         )
 
-    def shoot(self, position: Tuple[int, int], shot_by: ID):
+    def shoot(self, position: Tuple[int, int], shot_by: Team):
         return self._shoot(position, shot_by, load_image("bullet.png", 4, 4))

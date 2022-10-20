@@ -2,22 +2,22 @@ import json
 import socket
 from typing import List, Tuple, Callable, Dict
 
+from shared.character import Character
 from shared.find import find
 from shared.sprite import Sprite
 from shared.team import Team
 
 
-class Player(Sprite):
+class Handler(Sprite):
     client: socket.socket
     teams: List[Team]
-    team: Team
+    character: Character | None
     event_table: Dict[str, Callable]
 
     def __init__(self, client: socket.socket, teams: List[Team]):
-        super(Player, self).__init__()
+        super(Handler, self).__init__()
         self.client = client
         self.teams = teams
-        self.team = teams[0]
         self.event_table = {
             "team_get": self.team_get,
             "team_set": self.team_set,

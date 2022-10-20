@@ -1,13 +1,14 @@
-from typing import Tuple, List
+from typing import Tuple
 
 import pygame.time
 
 from game.gsprite import GSprite, load_image
-from game.gweapon import GWeapon, GGun, GUN_OFFSET, GBullet
-from game.variables import weapons
+from game.gweapon import GWeapon, GGun, GBullet
+from game.variables import weapons, sprites
 from shared.character import Character
 from shared.find import find
 from shared.team import Team
+from shared.weapon import GUN_OFFSET
 
 pygame.font.init()
 
@@ -40,7 +41,7 @@ class GCharacter(GSprite, Character):
         self.ability_cooldown_text = GSprite().init_gsprite(FONT.render("Ready", True, (0, 0, 0)), 0, 0)
         self.health_bar = GSprite().init_gsprite(load_image("red.png", int(self.health / self.max_health * 100), 16), 0, 0)
         self.health_bar_bg = GSprite().init_gsprite(load_image("black.png", 100, 16), 0, 0)
-        self.init_character(weapon.id, team.id, max_health, health, ability_cooldown, x, y, width, height)
+        self.init_character(weapon, team, max_health, health, ability_cooldown, x, y, width, height)
         self.init_gsprite(load_image(path, width, height), x, y)
         return self
 
@@ -74,7 +75,7 @@ class GCharacter(GSprite, Character):
             self.y + HEALTH_BAR_OFFSET[1]
         )
 
-    def ability(self, sprites: List):
+    def ability(self, mouse_position: Tuple[int, int]):
         pass
 
     def show(self):
@@ -87,9 +88,8 @@ class GCharacter(GSprite, Character):
 
 class Cyborg(GCharacter):
     def __init__(self, team: Team, x: int, y: int):
-        weapon = GGun(x + GUN_OFFSET[0], y + GUN_OFFSET[1])
         self.init_gcharacter(
-            weapon=weapon,
+            weapon=GGun(x + GUN_OFFSET[0], y + GUN_OFFSET[1]),
             team=team,
             max_health=30,
             health=30,
@@ -101,7 +101,7 @@ class Cyborg(GCharacter):
             height=48
         )
 
-    def ability(self, sprites: List):
+    def ability(self, mouse_position: Tuple[int, int]):
         now = pygame.time.get_ticks()
         if now - self.ability_last_used < self.ability_cooldown:
             return
@@ -109,7 +109,7 @@ class Cyborg(GCharacter):
 
         mouse_position = pygame.mouse.get_pos()
         bullet = GBullet(
-            shot_by=self.id,
+            shot_by=self.team,
             damage=10,
             speed=5,
             x1=find(weapons, lambda x: x.id == self.weapon).x,
