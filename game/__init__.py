@@ -6,11 +6,13 @@ from game.gcharacter import GCyborg, GCharacter
 from game.gweapon import GBullet
 from game.variables import sprites, teams
 from game import socket
+from shared.find import find
+from shared.sprite import Sprite
 from shared.team import Team
 
 
 def main():
-    global teams, characters
+    global teams, characters, sprites
 
     pygame.init()
     socket.connect()
@@ -23,31 +25,54 @@ def main():
     pygame.display.set_caption("Graz")
 
     # TODO: fix
-    # sprites = []
     # player = GCyborg(x=100, y=100)
     # sprites.append(player)
     team: Team | None = None
     character: GCharacter | None = None
+    select_sprites = []
 
     for i in range(len(teams)):
-        sprites.append(GSprite().init_gsprite(
-            FONT.render(teams[i]["name"], True, teams[i]["color"]),
-            (i + 1) * 100,
-            100
-        ))
+        surface = FONT.render(teams[i]["name"], True, teams[i]["color"])
+        x = (i + 1) * 100
+        y = 100
+        select_sprite = Sprite().init_sprite(x, y, surface.get_width(), surface.get_height())
+        select_sprite.select_id = teams[i]["id"]
+        select_sprites.append(select_sprite)
+        sprites.append(GSprite().init_gsprite(surface, x, y))
 
     running = True
     clock = pygame.time.Clock()
 
     while running:
+        print(f"team {team}")
         for event in pygame.event.get():
             if event.type == QUIT:
                 running = False
             elif event.type == MOUSEBUTTONDOWN:
-                # bullet = player.shoot(event.pos)
-                # if bullet is not None:
-                #     sprites.append(bullet)
-                pass
+                mouse_position = event.pos
+
+                if len(select_sprites) == 0:
+                    # bullet = player.shoot(event.pos)
+                    # if bullet is not None:
+                    #     sprites.append(bullet)
+                    pass
+
+                else:
+                    for select_sprite in select_sprites:
+                        if not Sprite().init_sprite(
+                                mouse_position[0],
+                                mouse_position[1],
+                                1, 1
+                        ).collides_with(select_sprite):
+                            continue
+
+                        if team is None:
+                            team = find(teams, lambda x: x["id"] == select_sprite.select_id)
+                        elif character is None:
+                            character = find(characters, lambda x: x["id"] == select_sprite.select_id)
+                        sprites = []
+                        select_sprites = []
+                        break
 
         keys = pygame.key.get_pressed()
 
@@ -72,13 +97,13 @@ def main():
         # player.move_by(x * MOVEMENT_SPEED, y * MOVEMENT_SPEED)
 
         screen.fill((255, 255, 255))
-        for sprite in sprites:
-            if sprite is None:
+        for select_sprite in sprites:
+            if select_sprite is None:
                 continue
 
-            sprite.update()
-            if sprite.destroy:
-                sprites.pop(sprites.index(sprite))
+            select_sprite.update()
+            if select_sprite.destroy:
+                sprites.pop(sprites.index(select_sprite))
                 continue
 
         for i in range(len(sprites)):
@@ -110,10 +135,10 @@ def main():
                 bullet.destroy = True
                 character.take_damage(bullet.damage)
 
-        for sprite in sprites:
-            if sprite is None:
+        for select_sprite in sprites:
+            if select_sprite is None:
                 continue
 
-            sprite.show()
+            select_sprite.show()
         pygame.display.flip()
         clock.tick(60)
