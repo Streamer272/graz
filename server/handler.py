@@ -30,32 +30,39 @@ class Handler(Sprite):
 
     def handle(self):
         while True:
-            data = self.client.recv(1024)
-            if not data:
-                break
-            data = json.loads(data)
+            try:
+                data = self.client.recv(1024)
+                if not data:
+                    break
+                data = json.loads(data.decode())
 
-            function = self.event_table.get(data.event)
-            if not function:
-                continue
-            if data.get("value"):
-                result = function(data["value"])
-            else:
-                result = function()
+                function = self.event_table.get(data["event"])
+                if not function:
+                    continue
+                if data.get("value"):
+                    result = function(data["value"])
+                else:
+                    result = function()
 
-            if result is None:
-                result = {}
-            self.client.send(json.dumps(result))
+                if result is None:
+                    result = {}
+                self.client.send(json.dumps(result).encode())
+            except Exception as e:
+                print(f"Exception occurred: {e}")
 
     def team_get(self):
-        return teams
+        return [{
+            "id": it.id,
+            "name": it.name,
+            "color": it.color
+        } for it in teams]
 
     def team_set(self, value: str):
         team = find(teams, lambda x: x.id == value)
         self.character.team = team
 
     def character_get(self):
-        return characters
+        return [it.__name__ for it in characters]
 
     def character_set(self, value: str):
         character = find(characters, lambda x: x.id == value)

@@ -2,18 +2,14 @@ from typing import Tuple
 
 import pygame.time
 
-from game.gsprite import GSprite, load_image
+from game.gsprite import GSprite, load_image, FONT
 from game.gweapon import GWeapon, GGun, GBullet
-from game.variables import sprites
 from shared.character import Character
 from shared.team import Team
 from shared.weapon import GUN_OFFSET
 
-pygame.font.init()
-
 HEALTH_BAR_OFFSET = (0, -24)
 ABILITY_COOLDOWN_OFFSET = (0, 58)
-FONT = pygame.font.SysFont("freeserif", 16)
 
 
 class GCharacter(GSprite, Character):
@@ -46,7 +42,6 @@ class GCharacter(GSprite, Character):
         return self
 
     def shoot(self, position: Tuple[int, int]):
-        # TODO: change self.id to self.team
         return self.weapon.shoot(position, self.team)
 
     def take_damage(self, damage: int):
@@ -118,4 +113,4 @@ class GCyborg(GCharacter):
             y2=mouse_position[1],
             surface=load_image("energy-bolt.png", 12, 12)
         )
-        sprites.append(bullet)
+        return bullet

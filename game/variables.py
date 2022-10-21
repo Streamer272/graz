@@ -1,3 +1,3 @@
 characters = []
+teams = []
 sprites = []
-local_sprites = []

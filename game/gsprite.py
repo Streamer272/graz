@@ -2,7 +2,10 @@ import pygame
 
 from shared.sprite import Sprite
 
+pygame.font.init()
+
 MOVEMENT_SPEED = 2.0
+FONT = pygame.font.SysFont("freeserif", 16)
 
 
 def load_image(path: str, width: int, height: int):

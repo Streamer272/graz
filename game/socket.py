@@ -12,8 +12,13 @@ def recieve():
     data = client.recv(1024)
     if not data:
         raise Exception("No data")
-    return json.loads(data)
+    return json.loads(data.decode())
 
 
-def send(data):
-    client.send(json.dumps(data))
+def send(event: str, value: object | None = None):
+    data = {
+        "event": event
+    }
+    if value is not None:
+        data["value"] = value
+    client.send(json.dumps(data).encode())

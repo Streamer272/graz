@@ -1,16 +1,23 @@
 import pygame
 from pygame.locals import *
 
-from game.gsprite import MOVEMENT_SPEED
+from game.gsprite import MOVEMENT_SPEED, FONT, GSprite
 from game.gcharacter import GCyborg, GCharacter
 from game.gweapon import GBullet
-from game.variables import sprites
+from game.variables import sprites, teams
 from game import socket
+from shared.team import Team
 
 
 def main():
+    global teams, characters
+
     pygame.init()
     socket.connect()
+    socket.send("team_get")
+    teams = socket.recieve()
+    socket.send("character_get")
+    characters = socket.recieve()
 
     screen = pygame.display.set_mode((512, 512), pygame.RESIZABLE)
     pygame.display.set_caption("Graz")
@@ -19,6 +26,15 @@ def main():
     # sprites = []
     # player = GCyborg(x=100, y=100)
     # sprites.append(player)
+    team: Team | None = None
+    character: GCharacter | None = None
+
+    for i in range(len(teams)):
+        sprites.append(GSprite().init_gsprite(
+            FONT.render(teams[i]["name"], True, teams[i]["color"]),
+            (i + 1) * 100,
+            100
+        ))
 
     running = True
     clock = pygame.time.Clock()
@@ -36,7 +52,8 @@ def main():
         keys = pygame.key.get_pressed()
 
         if keys[K_q]:
-            # player.ability(pygame.mouse.get_pos())
+            # bullet = player.ability(pygame.mouse.get_pos())
+            # sprites.append(bullet)
             pass
 
         x = 0
