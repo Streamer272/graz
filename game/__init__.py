@@ -44,7 +44,7 @@ def main():
     clock = pygame.time.Clock()
 
     while running:
-        print(f"team {team}")
+        print(f"team {team}; character: {character},")
         for event in pygame.event.get():
             if event.type == QUIT:
                 running = False
@@ -66,12 +66,24 @@ def main():
                         ).collides_with(select_sprite):
                             continue
 
+                        select_sprites = []
+                        sprites = []
+
                         if team is None:
                             team = find(teams, lambda x: x["id"] == select_sprite.select_id)
+                            socket.send("team_set", team.id)
+                            for i in range(len(characters)):
+                                surface = FONT.render(characters[i], True, (0, 0, 0))
+                                x = (i + 1) * 100
+                                y = 100
+                                select_sprite = Sprite().init_sprite(x, y, surface.get_width(), surface.get_height())
+                                select_sprite.select_id = characters[i]
+                                select_sprites.append(select_sprite)
+                                sprites.append(GSprite().init_gsprite(surface, x, y))
                         elif character is None:
-                            character = find(characters, lambda x: x["id"] == select_sprite.select_id)
-                        sprites = []
-                        select_sprites = []
+                            class_name = f"G{find(characters, lambda x: x == select_sprite.select_id)}"
+                            character = eval(class_name)(team, 100, 100)
+
                         break
 
         keys = pygame.key.get_pressed()
