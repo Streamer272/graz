@@ -1,5 +1,6 @@
 from typing import Tuple
 
+from shared.entity import ID
 from shared.sprite import Entity
 
 
@@ -11,3 +12,7 @@ class Team(Entity):
         self.name = name
         self.color = color
         self.init_entity()
+
+    def set_id(self, id: ID):
+        self.id = id
+        return self

@@ -34,7 +34,7 @@ class GCharacter(GSprite, Character):
     ):
         self.ability_last_used = -ability_cooldown
         self.ability_cooldown_text = GSprite().init_gsprite(FONT.render("Ready", True, (0, 0, 0)), 0, 0)
-        self.health_bar = GSprite().init_gsprite(load_image("red.png", int(self.health / self.max_health * 100), 16), 0, 0)
+        self.health_bar = GSprite().init_gsprite(load_image("red.png", int(health / max_health * 100), 16), 0, 0)
         self.health_bar_bg = GSprite().init_gsprite(load_image("black.png", 100, 16), 0, 0)
         self.init_character(weapon, team, max_health, health, ability_cooldown, x, y, width, height)
         self.init_gsprite(load_image(path, width, height), x, y)

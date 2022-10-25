@@ -1,15 +1,17 @@
 import json
 import random
 import socket
+import re
 from typing import Tuple, Callable, Dict
 
-from server.variables import characters, sprites, teams
+from server.variables import characters, sprites, teams, players
 from shared.character import Character, Cyborg
+from shared.entity import Entity
 from shared.find import find
-from shared.sprite import Sprite
+from shared.sprite import MOVEMENT_SPEED
 
 
-class Handler(Sprite):
+class Handler(Entity):
     client: socket.socket
     character: Character | None
     event_table: Dict[str, Callable]
@@ -27,8 +29,10 @@ class Handler(Sprite):
             "player_move": self.player_move,
             "player_ability": self.player_ability
         }
+        self.init_entity()
 
     def handle(self):
+        self.log("Player connected")
         while True:
             try:
                 data = self.client.recv(1024)
@@ -39,16 +43,43 @@ class Handler(Sprite):
                 function = self.event_table.get(data["event"])
                 if not function:
                     continue
+                self.log(f"Calling {function.__name__}")
                 if data.get("value"):
                     result = function(data["value"])
                 else:
                     result = function()
 
-                if result is None:
-                    result = {}
-                self.client.send(json.dumps(result).encode())
+                if result is not None and result != {}:
+                    self.client.send(json.dumps(result).encode())
             except Exception as e:
-                print(f"Exception occurred: {e}")
+                self.log(f"Exception occurred: {e} ({type(e)})")
+                if isinstance(e, ConnectionError):
+                    self.log("Connection lost")
+                    players.pop(players.index(self))
+                    break
+
+    def log(self, message):
+        print(f"[{self.id}] {message}")
+
+    def broadcast(self, event, value):
+        self.log(f"Looping through {players}")
+        for player in players:
+            if player is None:
+                continue
+
+            self.log(f"Sending {json.dumps({'event': event, 'value': value})}")
+            try:
+                player.client.send(json.dumps({
+                    "event": event,
+                    "value": value
+                }).encode())
+            except ConnectionError:
+                pass
+
+    def get_character_name(self, character: str):
+        regex = "(?<=<class 'shared.character.).*(?='>)"
+        match = re.search(regex, character)
+        return None if match is None else match.group()
 
     def team_get(self):
         return [{
@@ -65,16 +96,29 @@ class Handler(Sprite):
         return [it.__name__ for it in characters]
 
     def character_set(self, value: str):
-        character = find(characters, lambda x: x.id == value)
+        character = find(characters, lambda x: self.get_character_name(str(x)) == value)
         self.character = character(self.character.team, self.character.x, self.character.y)
+        self.broadcast("sprite_create", {
+            "id": self.id,
+            "path": f"{self.get_character_name(str(type(self.character))).lower()}.png",
+            "x": self.character.x,
+            "y": self.character.y,
+            "width": self.character.width,
+            "height": self.character.height
+        })
 
     def shoot(self, value: Tuple[int, int]):
         bullet = self.character.weapon.shoot(value, self.character.team)
         sprites.append(bullet)
 
     def player_move(self, value: Tuple[int, int]):
-        self.character.x = value[0]
-        self.character.y = value[1]
+        self.character.x = value[0] * MOVEMENT_SPEED
+        self.character.y = value[1] * MOVEMENT_SPEED
+        self.broadcast("sprite_move", {
+            "id": self.id,
+            "x": self.character.x,
+            "y": self.character.y
+        })
 
     def player_ability(self, value: Tuple[int, int]):
         bullet = self.character.ability(value)

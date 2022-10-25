@@ -2,7 +2,7 @@ from math import sqrt, pow
 
 from shared.entity import Entity
 
-MOVEMENT_SPEED = 2
+MOVEMENT_SPEED = 2.0
 
 
 class Sprite(Entity):

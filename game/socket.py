@@ -10,6 +10,7 @@ def connect():
 
 def recieve():
     data = client.recv(1024)
+    print(f"recevied {data.decode()}")
     if not data:
         raise Exception("No data")
     return json.loads(data.decode())
@@ -21,4 +22,5 @@ def send(event: str, value: object | None = None):
     }
     if value is not None:
         data["value"] = value
+    print(f"sending {data}")
     client.send(json.dumps(data).encode())

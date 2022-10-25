@@ -41,7 +41,7 @@ value: Tuple[x, y]
 --- Server emitted events ---
 
 event: "sprite_create"
-value: Tuple[id, class, path, x, y, width, height]
+value: Tuple[id, path, x, y, width, height]
 
 event: "sprite_move"
 value: Tuple[id, x, y]

@@ -4,7 +4,6 @@ from shared.sprite import Sprite
 
 pygame.font.init()
 
-MOVEMENT_SPEED = 2.0
 FONT = pygame.font.SysFont("freeserif", 16)
 
 

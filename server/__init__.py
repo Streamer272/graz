@@ -13,7 +13,6 @@ def main():
 
     while True:
         client, _ = server.accept()
-        print("Client connected")
         handler = Handler(client)
         Thread(target=handler.handle, daemon=True).start()
         players.append(handler)
