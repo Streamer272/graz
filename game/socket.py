@@ -13,6 +13,7 @@ def recieve():
     print(f"recevied {data.decode()}")
     if not data:
         raise Exception("No data")
+    print(f"[SOCKET] Received '{data.decode()}'")
     return json.loads(data.decode())
 
 

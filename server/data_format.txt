@@ -1,4 +1,4 @@
---- Server side events ---
+--- Client emitted events ---
 
 event: "team_get"
 ->
@@ -18,7 +18,9 @@ value: id
 ->
 {}
 
---- Client side events ---
+event: "refresh"
+->
+[Sprite]
 
 # mouse coordinates
 event: "shoot"

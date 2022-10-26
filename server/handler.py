@@ -25,6 +25,7 @@ class Handler(Entity):
             "team_set": self.team_set,
             "character_get": self.character_get,
             "character_set": self.character_set,
+            "refresh": self.refresh,
             "shoot": self.shoot,
             "player_move": self.player_move,
             "player_ability": self.player_ability
@@ -55,6 +56,7 @@ class Handler(Entity):
                 self.log(f"Exception occurred: {e} ({type(e)})")
                 if isinstance(e, ConnectionError):
                     self.log("Connection lost")
+                    self.broadcast("sprite_destroy", self.id)
                     players.pop(players.index(self))
                     break
 
@@ -62,12 +64,11 @@ class Handler(Entity):
         print(f"[{self.id}] {message}")
 
     def broadcast(self, event, value):
-        self.log(f"Looping through {players}")
         for player in players:
             if player is None:
                 continue
 
-            self.log(f"Sending {json.dumps({'event': event, 'value': value})}")
+            player.log(f"Broadcasting {json.dumps({'event': event, 'value': value})}")
             try:
                 player.client.send(json.dumps({
                     "event": event,
@@ -107,13 +108,28 @@ class Handler(Entity):
             "height": self.character.height
         })
 
+    def refresh(self):
+        for player in players:
+            self.client.send(json.dumps({
+                "event": "sprite_create",
+                "value": {
+                    "id": player.id,
+                    "path": f"{self.get_character_name(str(type(player.character))).lower()}.png",
+                    "x": player.character.x,
+                    "y": player.character.y,
+                    "width": player.character.width,
+                    "height": player.character.height
+                }
+            }).encode())
+
     def shoot(self, value: Tuple[int, int]):
         bullet = self.character.weapon.shoot(value, self.character.team)
         sprites.append(bullet)
 
     def player_move(self, value: Tuple[int, int]):
-        self.character.x = value[0] * MOVEMENT_SPEED
-        self.character.y = value[1] * MOVEMENT_SPEED
+        self.log(f"Updated x:y from {self.character.x}:{self.character.y} to {self.character.x + value[0] * MOVEMENT_SPEED}:{self.character.y + value[1] * MOVEMENT_SPEED}")
+        self.character.x += value[0] * MOVEMENT_SPEED
+        self.character.y += value[1] * MOVEMENT_SPEED
         self.broadcast("sprite_move", {
             "id": self.id,
             "x": self.character.x,

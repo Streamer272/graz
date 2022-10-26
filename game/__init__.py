@@ -51,9 +51,14 @@ def main():
         if not data.get("event"):
             return
         value = data.get("value")
-        print("Received ", data)
         match data["event"]:
             case "sprite_create":
+                try:
+                    find(sprites, lambda x: x.id == value["id"])
+                    return
+                except Exception:
+                    pass
+
                 sprite = GSprite().init_gsprite(
                     load_image(
                         value["path"],
@@ -67,7 +72,7 @@ def main():
                 sprites.append(sprite)
             case "sprite_move":
                 sprite = find(sprites, lambda x: x.id == value["id"])
-                sprite.move_by(value["x"], value["y"])
+                sprite.move_to(value["x"], value["y"])
             case "sprite_destroy":
                 sprite = find(sprites, lambda x: x.id == value["id"])
                 sprites.pop(sprites.index(sprite))
@@ -154,6 +159,7 @@ def main():
 
             if not receiving:
                 Thread(target=receive, daemon=True).start()
+                socket.send("refresh")
                 receiving = True
 
         # rendering
